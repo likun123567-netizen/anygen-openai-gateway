@@ -204,7 +204,8 @@ app.post('/v1/images/generations', async (req, res) => {
   if (!requireGatewayAuth(req, res)) return;
 
   const model = req.body?.model || 'anygen-image（图片：生成）';
-  const operation = modelToOperation(model) || 'image';
+  // 强制走 AnyGen image operation，避免第三方客户端传入未知 model 被误映射成 slide/对话任务
+  const operation = 'image';
   const prompt = typeof req.body?.prompt === 'string' ? req.body.prompt : '';
   const n = req.body?.n;
   const size = req.body?.size;
