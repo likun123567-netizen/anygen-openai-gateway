@@ -9,7 +9,7 @@ app.use(morgan('combined'));
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
 const ANYGEN_BASE_URL = process.env.ANYGEN_BASE_URL || 'https://www.anygen.io';
-// Render/Railway 等平台通常会给 PORT；本服务默认 8080。
+// Render/Railway ç­å¹³å°éå¸¸ä¼ç» PORTï¼æ¬æå¡é»è®¤ 8080ã
 const ANYGEN_API_KEY = process.env.ANYGEN_API_KEY || '';
 const GATEWAY_KEY = process.env.GATEWAY_KEY || '';
 
@@ -36,14 +36,35 @@ function nowUnix() {
 }
 
 const VIRTUAL_MODELS = [
-  { id: 'anygen-slide', operation: 'slide' },
-  { id: 'anygen-doc', operation: 'doc' },
-  { id: 'anygen-website', operation: 'website' },
-  { id: 'anygen-data-analysis', operation: 'data_analysis' },
-  { id: 'anygen-deep-research', operation: 'deep_research' },
-  { id: 'anygen-smart-draw', operation: 'smart_draw' },
-  { id: 'anygen-storybook', operation: 'storybook' },
-  { id: 'anygen-video', operation: 'video' }
+  { id: 'anygen-slideï¼PPTï¼é»è®¤ï¼', operation: 'slide' },
+  { id: 'anygen-slide-pitchï¼PPTï¼èèµè·¯æ¼ï¼', operation: 'slide' },
+  { id: 'anygen-slide-productï¼PPTï¼äº§ååå¸ï¼', operation: 'slide' },
+  { id: 'anygen-slide-trainingï¼PPTï¼å¹è®­è¯¾ä»¶ï¼', operation: 'slide' },
+  { id: 'anygen-slide-reportï¼PPTï¼æ°æ®æ±æ¥ï¼', operation: 'slide' },
+  { id: 'anygen-slide-roadmapï¼PPTï¼è§åè·¯çº¿å¾ï¼', operation: 'slide' },
+  { id: 'anygen-slide-mindmapï¼PPTï¼æç»´å¯¼å¾ï¼', operation: 'slide' },
+  { id: 'anygen-slide-lectureï¼PPTï¼è®²åº§åäº«ï¼', operation: 'slide' },
+  { id: 'anygen-docï¼ææ¡£ï¼é»è®¤ï¼', operation: 'doc' },
+  { id: 'anygen-doc-reportï¼ææ¡£ï¼æ¥åï¼', operation: 'doc' },
+  { id: 'anygen-doc-prdï¼ææ¡£ï¼PRDï¼', operation: 'doc' },
+  { id: 'anygen-doc-proposalï¼ææ¡£ï¼æ¹æ¡/ææ ï¼', operation: 'doc' },
+  { id: 'anygen-doc-resumeï¼ææ¡£ï¼ç®åï¼', operation: 'doc' },
+  { id: 'anygen-doc-meetingï¼ææ¡£ï¼ä¼è®®çºªè¦ï¼', operation: 'doc' },
+  { id: 'anygen-doc-sopï¼ææ¡£ï¼SOP/æµç¨ï¼', operation: 'doc' },
+  { id: 'anygen-doc-whitepaperï¼ææ¡£ï¼ç½ç®ä¹¦ï¼', operation: 'doc' },
+  { id: 'anygen-websiteï¼ç½ç«ï¼é»è®¤ï¼', operation: 'website' },
+  { id: 'anygen-website-landingï¼ç½ç«ï¼è½å°é¡µï¼', operation: 'website' },
+  { id: 'anygen-website-portfolioï¼ç½ç«ï¼ä½åéï¼', operation: 'website' },
+  { id: 'anygen-website-dashboardï¼ç½ç«ï¼ä»ªè¡¨çï¼', operation: 'website' },
+  { id: 'anygen-data-analysisï¼æ°æ®ï¼åææ¥åï¼', operation: 'data_analysis' },
+  { id: 'anygen-data-cleaningï¼æ°æ®ï¼æ¸æ´æ´çï¼', operation: 'data_analysis' },
+  { id: 'anygen-data-visualizationï¼æ°æ®ï¼å¯è§åï¼', operation: 'data_analysis' },
+  { id: 'anygen-deep-researchï¼ç ç©¶ï¼æ·±åº¦è°ç ï¼', operation: 'deep_research' },
+  { id: 'anygen-research-briefï¼ç ç©¶ï¼å¿«æ¥ç®æ¥ï¼', operation: 'deep_research' },
+  { id: 'anygen-smart-drawï¼å¶å¾ï¼æµç¨å¾/æ¶æå¾ï¼', operation: 'smart_draw' },
+  { id: 'anygen-smart-draw-umlï¼å¶å¾ï¼UMLï¼', operation: 'smart_draw' },
+  { id: 'anygen-storybookï¼ç»æ¬ï¼æäºä¹¦ï¼', operation: 'storybook' },
+  { id: 'anygen-videoï¼è§é¢ï¼çæï¼', operation: 'video' }
 ];
 
 function modelToOperation(model) {
