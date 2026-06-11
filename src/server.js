@@ -63,7 +63,7 @@ const VIRTUAL_MODELS = [
   { id: 'anygen-research-brief（研究：快报简报）', operation: 'deep_research' },
   { id: 'anygen-smart-draw（制图：流程图/架构图）', operation: 'smart_draw' },
   { id: 'anygen-smart-draw-uml（制图：UML）', operation: 'smart_draw' },
-  { id: 'anygen-image（图片：生成）', operation: 'image' },
+  { id: 'anygen-image（图片：生成）', operation: 'ai_designer' },
   { id: 'anygen-storybook（绘本：故事书）', operation: 'storybook' },
   { id: 'anygen-video（视频：生成）', operation: 'video' }
 ];
@@ -204,8 +204,8 @@ app.post('/v1/images/generations', async (req, res) => {
   if (!requireGatewayAuth(req, res)) return;
 
   const model = req.body?.model || 'anygen-image（图片：生成）';
-  // 强制走 AnyGen image operation，避免第三方客户端传入未知 model 被误映射成 slide/对话任务
-  const operation = 'image';
+  // AnyGen 官方 CLI 的图像类 operation 名为 ai_designer
+  const operation = 'ai_designer';
   const prompt = typeof req.body?.prompt === 'string' ? req.body.prompt : '';
   const n = req.body?.n;
   const size = req.body?.size;
@@ -222,7 +222,7 @@ app.post('/v1/images/generations', async (req, res) => {
 
   try {
     const created = await anygenTaskCreate({
-      operation: operation === 'image' ? 'image' : operation,
+      operation,
       prompt: fullPrompt
     });
 
