@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: anygen-openai-gateway
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: ANYGEN_API_KEY
+        sync: false
+      - key: GATEWAY_KEY
+        sync: false
+      - key: ANYGEN_BASE_URL
+        value: https://www.anygen.io
