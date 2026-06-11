@@ -63,6 +63,7 @@ const VIRTUAL_MODELS = [
   { id: 'anygen-research-brief（研究：快报简报）', operation: 'deep_research' },
   { id: 'anygen-smart-draw（制图：流程图/架构图）', operation: 'smart_draw' },
   { id: 'anygen-smart-draw-uml（制图：UML）', operation: 'smart_draw' },
+  { id: 'anygen-image（图片：生成）', operation: 'image' },
   { id: 'anygen-storybook（绘本：故事书）', operation: 'storybook' },
   { id: 'anygen-video（视频：生成）', operation: 'video' }
 ];
