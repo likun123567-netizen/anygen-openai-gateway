@@ -140,6 +140,35 @@ app.get('/v1/models', (req, res) => {
   });
 });
 
+
+// OpenAI compatible: images generations
+app.post('/v1/images/generations', async (req, res) => {
+  if (!requireGatewayAuth(req, res)) return;
+
+  const model = req.body?.model || 'anygen-image';
+  const operation = modelToOperation(model) || 'image';
+  const prompt = typeof req.body?.prompt === 'string' ? req.body.prompt : '';
+  const n = req.body?.n;
+  const size = req.body?.size;
+  const extra = [];
+  if (n != null) extra.push(`n=${n}`);
+  if (size) extra.push(`size=${size}`);
+  const fullPrompt = extra.length ? `${prompt}\n\n[OpenAI image params: ${extra.join(', ')}]` : prompt;
+
+  try {
+    const created = await anygenTaskCreate({ operation: operation === 'image' ? 'image' : operation, prompt: fullPrompt });
+
+    res.json({ created: nowUnix(), data: [{ url: created.task_url }] });
+  } catch (e) {
+    res.status(500).json({
+      error: {
+        message: e?.message || String(e),
+        type: 'server_error',
+        code: 'anygen_gateway_error'
+      }
+    });
+  }
+});
 // OpenAI compatible: chat completions
 app.post('/v1/chat/completions', async (req, res) => {
   if (!requireGatewayAuth(req, res)) return;
