@@ -122,6 +122,64 @@ async function anygenTaskCreate({ operation, prompt }) {
   return data;
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function anygenTaskGet(taskId) {
+  if (!ANYGEN_API_KEY) {
+    throw new Error('Missing ANYGEN_API_KEY');
+  }
+
+  const url = `${ANYGEN_BASE_URL}/v1/openapi/tasks/${encodeURIComponent(taskId)}?auth_token=${encodeURIComponent(ANYGEN_API_KEY)}`;
+
+  const r = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'authorization': `Bearer ${ANYGEN_API_KEY}`
+    }
+  });
+
+  const data = await r.json().catch(() => null);
+  if (!r.ok) {
+    throw new Error(`AnyGen HTTP ${r.status}: ${JSON.stringify(data)}`);
+  }
+  if (!data?.success) {
+    throw new Error(`AnyGen get failed: ${data?.error || 'unknown error'}`);
+  }
+  return data;
+}
+
+function extractAnygenFileUrls(taskDetail) {
+  const files = taskDetail?.output?.files;
+  if (!Array.isArray(files)) return [];
+  return files
+    .map(f => (typeof f?.url === 'string' ? f.url : ''))
+    .filter(Boolean);
+}
+
+async function waitAnygenTaskFiles(taskId, { timeoutMs = 60000, pollMs = 2000 } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  let last;
+
+  while (Date.now() < deadline) {
+    last = await anygenTaskGet(taskId);
+
+    const status = String(last?.status || last?.data?.status || last?.state || last?.data?.state || '').toLowerCase();
+    const urls = extractAnygenFileUrls(last?.data || last);
+
+    if (urls.length > 0) return { status: status || 'completed', urls, detail: last };
+    if (status && ['failed', 'error', 'canceled', 'cancelled'].includes(status)) {
+      return { status, urls: [], detail: last };
+    }
+
+    await sleep(pollMs);
+  }
+
+  return { status: 'timeout', urls: [], detail: last };
+}
+
 app.get('/healthz', (req, res) => {
   res.json({ ok: true, time: new Date().toISOString() });
 });
@@ -145,20 +203,48 @@ app.get('/v1/models', (req, res) => {
 app.post('/v1/images/generations', async (req, res) => {
   if (!requireGatewayAuth(req, res)) return;
 
-  const model = req.body?.model || 'anygen-image';
+  const model = req.body?.model || 'anygen-image（图片：生成）';
   const operation = modelToOperation(model) || 'image';
   const prompt = typeof req.body?.prompt === 'string' ? req.body.prompt : '';
   const n = req.body?.n;
   const size = req.body?.size;
+
   const extra = [];
   if (n != null) extra.push(`n=${n}`);
   if (size) extra.push(`size=${size}`);
   const fullPrompt = extra.length ? `${prompt}\n\n[OpenAI image params: ${extra.join(', ')}]` : prompt;
 
-  try {
-    const created = await anygenTaskCreate({ operation: operation === 'image' ? 'image' : operation, prompt: fullPrompt });
+  const waitSecondsEnv = process.env.IMAGE_WAIT_SECONDS ? Number(process.env.IMAGE_WAIT_SECONDS) : 60;
+  const waitSecondsReq = req.body?.wait_seconds != null ? Number(req.body.wait_seconds) : undefined;
+  const waitSeconds = Number.isFinite(waitSecondsReq) ? waitSecondsReq : waitSecondsEnv;
+  const timeoutMs = Math.max(0, Math.min(waitSeconds, 300)) * 1000;
 
-    res.json({ created: nowUnix(), data: [{ url: created.task_url }] });
+  try {
+    const created = await anygenTaskCreate({
+      operation: operation === 'image' ? 'image' : operation,
+      prompt: fullPrompt
+    });
+
+    if (!timeoutMs) {
+      return res.json({ created: nowUnix(), data: [{ url: created.task_url }] });
+    }
+
+    const waited = await waitAnygenTaskFiles(created.task_id, { timeoutMs, pollMs: 2000 });
+
+    if (waited.urls.length > 0) {
+      const count = (typeof n === 'number' && n > 0) ? Math.min(n, waited.urls.length) : waited.urls.length;
+      return res.json({ created: nowUnix(), data: waited.urls.slice(0, count).map(url => ({ url })) });
+    }
+
+    return res.json({
+      created: nowUnix(),
+      data: [{ url: created.task_url }],
+      anygen: {
+        task_id: created.task_id,
+        task_url: created.task_url,
+        status: waited.status
+      }
+    });
   } catch (e) {
     res.status(500).json({
       error: {
