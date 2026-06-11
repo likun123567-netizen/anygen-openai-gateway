@@ -9,7 +9,7 @@ app.use(morgan('combined'));
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
 const ANYGEN_BASE_URL = process.env.ANYGEN_BASE_URL || 'https://www.anygen.io';
-// Render/Railway ç­å¹³å°éå¸¸ä¼ç» PORTï¼æ¬æå¡é»è®¤ 8080ã
+// Render/Railway 等平台通常会给 PORT；本服务默认 8080。
 const ANYGEN_API_KEY = process.env.ANYGEN_API_KEY || '';
 const GATEWAY_KEY = process.env.GATEWAY_KEY || '';
 
@@ -36,35 +36,35 @@ function nowUnix() {
 }
 
 const VIRTUAL_MODELS = [
-  { id: 'anygen-slideï¼PPTï¼é»è®¤ï¼', operation: 'slide' },
-  { id: 'anygen-slide-pitchï¼PPTï¼èèµè·¯æ¼ï¼', operation: 'slide' },
-  { id: 'anygen-slide-productï¼PPTï¼äº§ååå¸ï¼', operation: 'slide' },
-  { id: 'anygen-slide-trainingï¼PPTï¼å¹è®­è¯¾ä»¶ï¼', operation: 'slide' },
-  { id: 'anygen-slide-reportï¼PPTï¼æ°æ®æ±æ¥ï¼', operation: 'slide' },
-  { id: 'anygen-slide-roadmapï¼PPTï¼è§åè·¯çº¿å¾ï¼', operation: 'slide' },
-  { id: 'anygen-slide-mindmapï¼PPTï¼æç»´å¯¼å¾ï¼', operation: 'slide' },
-  { id: 'anygen-slide-lectureï¼PPTï¼è®²åº§åäº«ï¼', operation: 'slide' },
-  { id: 'anygen-docï¼ææ¡£ï¼é»è®¤ï¼', operation: 'doc' },
-  { id: 'anygen-doc-reportï¼ææ¡£ï¼æ¥åï¼', operation: 'doc' },
-  { id: 'anygen-doc-prdï¼ææ¡£ï¼PRDï¼', operation: 'doc' },
-  { id: 'anygen-doc-proposalï¼ææ¡£ï¼æ¹æ¡/ææ ï¼', operation: 'doc' },
-  { id: 'anygen-doc-resumeï¼ææ¡£ï¼ç®åï¼', operation: 'doc' },
-  { id: 'anygen-doc-meetingï¼ææ¡£ï¼ä¼è®®çºªè¦ï¼', operation: 'doc' },
-  { id: 'anygen-doc-sopï¼ææ¡£ï¼SOP/æµç¨ï¼', operation: 'doc' },
-  { id: 'anygen-doc-whitepaperï¼ææ¡£ï¼ç½ç®ä¹¦ï¼', operation: 'doc' },
-  { id: 'anygen-websiteï¼ç½ç«ï¼é»è®¤ï¼', operation: 'website' },
-  { id: 'anygen-website-landingï¼ç½ç«ï¼è½å°é¡µï¼', operation: 'website' },
-  { id: 'anygen-website-portfolioï¼ç½ç«ï¼ä½åéï¼', operation: 'website' },
-  { id: 'anygen-website-dashboardï¼ç½ç«ï¼ä»ªè¡¨çï¼', operation: 'website' },
-  { id: 'anygen-data-analysisï¼æ°æ®ï¼åææ¥åï¼', operation: 'data_analysis' },
-  { id: 'anygen-data-cleaningï¼æ°æ®ï¼æ¸æ´æ´çï¼', operation: 'data_analysis' },
-  { id: 'anygen-data-visualizationï¼æ°æ®ï¼å¯è§åï¼', operation: 'data_analysis' },
-  { id: 'anygen-deep-researchï¼ç ç©¶ï¼æ·±åº¦è°ç ï¼', operation: 'deep_research' },
-  { id: 'anygen-research-briefï¼ç ç©¶ï¼å¿«æ¥ç®æ¥ï¼', operation: 'deep_research' },
-  { id: 'anygen-smart-drawï¼å¶å¾ï¼æµç¨å¾/æ¶æå¾ï¼', operation: 'smart_draw' },
-  { id: 'anygen-smart-draw-umlï¼å¶å¾ï¼UMLï¼', operation: 'smart_draw' },
-  { id: 'anygen-storybookï¼ç»æ¬ï¼æäºä¹¦ï¼', operation: 'storybook' },
-  { id: 'anygen-videoï¼è§é¢ï¼çæï¼', operation: 'video' }
+  { id: 'anygen-slide（PPT：默认）', operation: 'slide' },
+  { id: 'anygen-slide-pitch（PPT：融资路演）', operation: 'slide' },
+  { id: 'anygen-slide-product（PPT：产品发布）', operation: 'slide' },
+  { id: 'anygen-slide-training（PPT：培训课件）', operation: 'slide' },
+  { id: 'anygen-slide-report（PPT：数据汇报）', operation: 'slide' },
+  { id: 'anygen-slide-roadmap（PPT：规划路线图）', operation: 'slide' },
+  { id: 'anygen-slide-mindmap（PPT：思维导图）', operation: 'slide' },
+  { id: 'anygen-slide-lecture（PPT：讲座分享）', operation: 'slide' },
+  { id: 'anygen-doc（文档：默认）', operation: 'doc' },
+  { id: 'anygen-doc-report（文档：报告）', operation: 'doc' },
+  { id: 'anygen-doc-prd（文档：PRD）', operation: 'doc' },
+  { id: 'anygen-doc-proposal（文档：方案/投标）', operation: 'doc' },
+  { id: 'anygen-doc-resume（文档：简历）', operation: 'doc' },
+  { id: 'anygen-doc-meeting（文档：会议纪要）', operation: 'doc' },
+  { id: 'anygen-doc-sop（文档：SOP/流程）', operation: 'doc' },
+  { id: 'anygen-doc-whitepaper（文档：白皮书）', operation: 'doc' },
+  { id: 'anygen-website（网站：默认）', operation: 'website' },
+  { id: 'anygen-website-landing（网站：落地页）', operation: 'website' },
+  { id: 'anygen-website-portfolio（网站：作品集）', operation: 'website' },
+  { id: 'anygen-website-dashboard（网站：仪表盘）', operation: 'website' },
+  { id: 'anygen-data-analysis（数据：分析报告）', operation: 'data_analysis' },
+  { id: 'anygen-data-cleaning（数据：清洗整理）', operation: 'data_analysis' },
+  { id: 'anygen-data-visualization（数据：可视化）', operation: 'data_analysis' },
+  { id: 'anygen-deep-research（研究：深度调研）', operation: 'deep_research' },
+  { id: 'anygen-research-brief（研究：快报简报）', operation: 'deep_research' },
+  { id: 'anygen-smart-draw（制图：流程图/架构图）', operation: 'smart_draw' },
+  { id: 'anygen-smart-draw-uml（制图：UML）', operation: 'smart_draw' },
+  { id: 'anygen-storybook（绘本：故事书）', operation: 'storybook' },
+  { id: 'anygen-video（视频：生成）', operation: 'video' }
 ];
 
 function modelToOperation(model) {
